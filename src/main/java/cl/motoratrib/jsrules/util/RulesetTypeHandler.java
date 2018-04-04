@@ -10,7 +10,7 @@ import cl.motoratrib.jsrules.impl.FirstTrueRulesetListExecutorImpl;
 import java.util.List;
 
 /**
- * Created by Marcelo Lomeña 5/14/2015
+ * Created by Marcelo Lomeña 5/14/2018
  */
 public enum RulesetTypeHandler {
     ALLTRUE {

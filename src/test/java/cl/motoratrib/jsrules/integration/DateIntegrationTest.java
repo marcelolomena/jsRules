@@ -13,7 +13,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 /**
- * Created by Marcelo Lomeña 5/20/2015
+ * Created by Marcelo Lomeña 5/20/2018
  */
 public class DateIntegrationTest {
 
@@ -34,7 +34,7 @@ public class DateIntegrationTest {
 
         RuleExecutor ruleExecutor = new RuleExecutorImpl(rule);
 
-        DateTime dateTime = DateTime.parse("2015-05-20");
+        DateTime dateTime = DateTime.parse("2018-05-20");
 
         assertEquals(true, ruleExecutor.execute(dateTime));
     }
@@ -70,7 +70,7 @@ public class DateIntegrationTest {
 
         RuleExecutor ruleExecutor = new RuleExecutorImpl(rule);
 
-        DateTime dateTime = DateTime.parse("2015-05-20");
+        DateTime dateTime = DateTime.parse("2018-05-20");
 
         assertNull(ruleExecutor.execute(dateTime));
     }

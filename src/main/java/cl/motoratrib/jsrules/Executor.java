@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Contains common methods used by various executors
  * <p/>
- * Created by Marcelo Lomeña 4/30/2015
+ * Created by Marcelo Lomeña 4/30/2018
  */
 public abstract class Executor {
     private static final Logger LOG = LoggerFactory.getLogger(Executor.class);

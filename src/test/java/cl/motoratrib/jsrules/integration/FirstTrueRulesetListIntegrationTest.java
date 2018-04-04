@@ -29,7 +29,7 @@ import static org.junit.Assert.assertNull;
  * InventoryRuleset.json
  * InBudgetRuleset.json
  * <p/>
- * Created by Marcelo Lomeña 5/16/2015
+ * Created by Marcelo Lomeña 5/16/2018
  */
 public class FirstTrueRulesetListIntegrationTest {
     private final String itemInStock = "Item is in stock";

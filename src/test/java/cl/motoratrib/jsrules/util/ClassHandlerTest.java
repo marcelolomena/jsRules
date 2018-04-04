@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2015 Marcelo.
+ * Copyright 2018 Marcelo.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -153,14 +153,14 @@ public class ClassHandlerTest {
 
     @Test
     public void DateTimeConversionTest() throws Exception {
-        String string = "2015-05-20";
+        String string = "2018-05-20";
         ClassHandler handler = ClassHandler.DATETIME;
 
         DateTime dateTime = handler.convertString(string);
 
         dateTime = dateTime.toDateTime(DateTimeZone.forOffsetHours(-6)); // allows the test to be run in any time zone
 
-        assertEquals("2015-05-20T00:00:00.000-06:00", dateTime.toString());
+        assertEquals("2018-05-20T00:00:00.000-06:00", dateTime.toString());
     }
 
     @Test
@@ -182,7 +182,7 @@ public class ClassHandlerTest {
 
     @Test
     public void DateSetConversionTest() throws Exception {
-        String string = "[\"2015-01-01\",\"2015-12-31\"]";
+        String string = "[\"2018-01-01\",\"2018-12-31\"]";
         ClassHandler handler = ClassHandler.DATESET;
 
         Set<Long> set = handler.convertString(string);

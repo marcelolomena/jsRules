@@ -28,7 +28,7 @@ import static org.junit.Assert.assertNull;
  * TrousersInBudget.json
  * ShirtInBudget.json
  * <p/>
- * Created by Marcelo Lomeña 5/16/2015
+ * Created by Marcelo Lomeña 5/16/2018
  */
 public class FirstTrueIntegrationTest {
     private final String trousers = "Trousers";

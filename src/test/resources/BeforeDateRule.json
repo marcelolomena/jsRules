@@ -8,7 +8,7 @@
   "rightParamConfig": {
     "parameterName": "rightDate",
     "parameterClass": "DateTime",
-    "parameterStaticValue": "2015-01-01"
+    "parameterStaticValue": "2018-01-01"
   },
   "responseConfig": {
     "response": "true",

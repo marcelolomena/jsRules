@@ -8,7 +8,7 @@
   "rightParamConfig": {
     "parameterName": "dateRange",
     "parameterClass": "DateSet",
-    "parameterStaticValue": "[\"2015-01-01\",\"2015-12-31\"]"
+    "parameterStaticValue": "[\"2018-01-01\",\"2018-12-31\"]"
   },
   "responseConfig": {
     "response": "true",

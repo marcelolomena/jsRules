@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * HashMap implementation suitable for simple caching
  * <p>
- * Created by Marcelo 9/5/2015.
+ * Created by Marcelo 9/5/2018.
  */
 public class CacheMap<K, V> extends LinkedHashMap<K, V> {
     private final int cacheSize;   // the maximum size of the cache

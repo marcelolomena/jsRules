@@ -15,7 +15,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 /**
- * Created by Marcelo Lomeña 5/13/2015
+ * Created by Marcelo Lomeña 5/13/2018
  */
 public class JsRulesTest {
     @org.junit.Rule

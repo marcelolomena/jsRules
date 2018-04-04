@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2015 Marcelo.
+ * Copyright 2018 Marcelo.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -38,7 +38,7 @@ import java.util.List;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Created by Marcelo Lomeña 5/14/2015
+ * Created by Marcelo Lomeña 5/14/2018
  */
 @RunWith(MockitoJUnitRunner.class)
 public class RulesetTypeHandlerTest {

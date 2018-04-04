@@ -16,7 +16,7 @@ import java.io.InputStream;
 import java.util.Map;
 
 /**
- * Created by Marcelo Lomeña 5/13/2015
+ * Created by Marcelo Lomeña 5/13/2018
  */
 public class JsRules {
 

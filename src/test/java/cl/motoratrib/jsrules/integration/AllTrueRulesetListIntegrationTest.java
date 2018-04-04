@@ -29,7 +29,7 @@ import static org.junit.Assert.assertNull;
  * InBudgetRuleset.json
  * InventoryRuleset.json
  * <p/>
- * Created by Marcelo Lomeña 5/16/2015
+ * Created by Marcelo Lomeña 5/16/2018
  */
 public class AllTrueRulesetListIntegrationTest {
     private JsRules jsRules;

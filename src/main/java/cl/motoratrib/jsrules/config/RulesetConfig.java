@@ -3,7 +3,7 @@ package cl.motoratrib.jsrules.config;
 import java.util.List;
 
 /**
- * Created by Marcelo Lomeña 5/14/2015
+ * Created by Marcelo Lomeña 5/14/2018
  */
 public class RulesetConfig implements Config {
     private String rulesetName;

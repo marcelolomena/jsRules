@@ -28,7 +28,7 @@ import static org.junit.Assert.assertNull;
  * CarriesItem.json
  * HasInventory.json
  * <p/>
- * Created by Marcelo Lomeña 5/16/2015
+ * Created by Marcelo Lomeña 5/16/2018
  */
 public class AllTrueIntegrationTest {
     private final String success = "Item is in stock";
