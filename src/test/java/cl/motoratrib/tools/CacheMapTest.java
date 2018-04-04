@@ -8,7 +8,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 /**
- * Created by el-groucho 9/5/2015.
+ * Created by Marcelo 9/5/2015.
  */
 public class CacheMapTest {
     private final String key = "testKey";
