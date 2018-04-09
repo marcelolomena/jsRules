@@ -23,6 +23,7 @@ public abstract class Executor {
      * @param expectedClass the class we are expecting the parameter to be
      */
     protected void validateParameter(String key, Object parameter, Class expectedClass) throws InvalidParameterException {
+        //LOG.debug("parameter : " +  parameter);
         if (parameter == null) {
             LOG.error("Expected Parameter {} is missing", key);
             throw new MissingParameterException();

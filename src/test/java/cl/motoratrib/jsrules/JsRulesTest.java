@@ -141,4 +141,5 @@ public class JsRulesTest {
 
         assertNotNull(jsRules.executeRuleset("MockRuleset", parameters));
     }
+
 }
