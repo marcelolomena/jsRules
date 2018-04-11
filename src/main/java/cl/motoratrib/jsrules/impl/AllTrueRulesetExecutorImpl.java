@@ -77,6 +77,7 @@ public class AllTrueRulesetExecutorImpl<T> extends RulesetExecutor<T> {
                 }
             }
         }
+        System.out.println("que chu : " + result);
         return result;
     }
 

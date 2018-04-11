@@ -1,3 +1,4 @@
+package cl.motoratrib;
 public class Parameter {
 
     private String parameterName;

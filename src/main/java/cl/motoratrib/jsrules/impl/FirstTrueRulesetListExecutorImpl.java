@@ -52,8 +52,7 @@ public class FirstTrueRulesetListExecutorImpl<T> extends RulesetListExecutor<T> 
     public T execute(Map<String, Object> parameters) throws InvalidParameterException {
         T result = null;
         /*
-         execute all the rules until a response is found -- if all are false, 
-         return null
+        Ejecutar todas las reglas hasta que se encuentre una respuesta; si todas son falsas, devolver nulo
         */
         for (RulesetExecutor<T> ruleSet : rulesetList) {
             T ruleResponse = ruleSet.execute(parameters);

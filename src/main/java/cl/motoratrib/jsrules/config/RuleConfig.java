@@ -24,8 +24,8 @@
 package cl.motoratrib.jsrules.config;
 
 /**
- *  Java representation of the json object used to configure a rule
- * 
+ *  Representacion Java de un objeto usado para configurar una regla
+ *
  * @author Marcelo
  */
 public class RuleConfig implements Config {

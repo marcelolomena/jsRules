@@ -29,6 +29,8 @@ import org.joda.time.DateTime;
 
 import java.io.IOException;
 import java.util.Set;
+import java.util.HashSet;
+import java.util.Arrays;
 
 /**
  *
@@ -81,6 +83,30 @@ public enum ClassHandler {
         @SuppressWarnings("unchecked")
         public String convertString(String string) {
             return string;
+        }
+    },
+    STRINGSET {
+        @Override
+        public Class getMyClass() {
+            return Set.class;
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public Set<String> convertString(String string) throws ClassHandlerException {
+            Set<String> stringSet;
+
+            try {
+                System.out.println("choriza   : " + string);
+                //stringSet = MAPPER.readValue(string, Set.class);
+                stringSet = new HashSet<String>(Arrays.asList(string.split(",")));
+                System.out.println("resultado : " + stringSet);
+                System.out.println("cantidad : " + stringSet.size());
+            } catch (Exception ex) {
+                throw new ClassHandlerException("Unable to convert " + string + " into a Set of Strings", ex);
+            }
+
+            return stringSet;
         }
     },
     NUMBERSET {

@@ -1,3 +1,5 @@
+package cl.motoratrib;
+
 import java.util.List;
 
 public class InJson {
