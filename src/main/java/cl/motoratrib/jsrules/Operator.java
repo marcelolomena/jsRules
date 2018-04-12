@@ -88,11 +88,7 @@ public enum Operator {
             Set<String> set = (Set<String>)right;
             boolean valueMatched = false;
             for (String setValueObject : set) {
-                System.out.println("IZQ   ----------> " + left.toString());
-                System.out.println("REGLA ----------> " + setValueObject);
-                System.out.println("RET ----------> " + left.toString().matches(setValueObject));
                 if (left.toString().matches(setValueObject)) {
-                    System.out.println("ENTRA");
                     valueMatched = true;
                     return valueMatched;
                 }

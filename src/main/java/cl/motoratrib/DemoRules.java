@@ -7,6 +7,10 @@ import java.io.File;
 import java.nio.file.Files;
 import java.util.*;
 
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 class ClaseGenerica<T> {
     T obj;
 
@@ -15,22 +19,19 @@ class ClaseGenerica<T> {
     }
 
     public String classType() {
-        System.out.println("El tipo de T es " + obj.getClass().getName());
         return obj.getClass().getName();
     }
 }
 
 public class DemoRules {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(DemoRules.class);
     public static void main (String [ ] args) throws Exception{
 
         ClaseGenerica response = null;
         String fileJson = "";
 
         if (args.length == 0) {
-
-            System.out.println("Falta el nombre del archivo");
-
+            LOGGER.error("Falta el nombre del archivo");
         } else if (args.length == 1){
 
             //lee nombre archivo json desde connsola
@@ -49,6 +50,8 @@ public class DemoRules {
                     parameters.put(p.getParameterName(), Long.valueOf(p.getParameterValue()));
                 else if(p.getParameterClass().equals("String"))
                     parameters.put(p.getParameterName(), p.getParameterValue());
+                else if(p.getParameterClass().equals("DateTime"))
+                    parameters.put(p.getParameterName(), DateTime.parse(p.getParameterValue()));
             }
 
             Object o = jsRules.executeRuleset(in.getRulesetName(), parameters);
@@ -58,9 +61,9 @@ public class DemoRules {
 
             if(response!=null) {
                 if (response.classType().equals("java.lang.String"))
-                    System.out.println("Respuesta : " + response.obj.toString());
+                    LOGGER.info("Respuesta : " + response.obj.toString());
             }else{
-                System.out.println("Respuesta : " + response );
+                LOGGER.info("Respuesta : " + response );
             }
 
 
@@ -72,7 +75,7 @@ public class DemoRules {
         ObjectMapper mapper = new ObjectMapper();
         byte[] json = Files.readAllBytes(inFile.toPath());
         String injson = new String(json, "ISO-8859-1");
-        System.out.println(injson);
+        LOGGER.debug(injson);
         InJson in = mapper.readValue(json, InJson.class);
         return in;
 

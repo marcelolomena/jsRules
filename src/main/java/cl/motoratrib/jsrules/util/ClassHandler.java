@@ -26,11 +26,12 @@ package cl.motoratrib.jsrules.util;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import cl.motoratrib.jsrules.exception.ClassHandlerException;
 import org.joda.time.DateTime;
-
+import org.apache.commons.lang3.time.DateUtils;
 import java.io.IOException;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Arrays;
+import java.util.Date;
 
 /**
  *
@@ -97,11 +98,7 @@ public enum ClassHandler {
             Set<String> stringSet;
 
             try {
-                System.out.println("choriza   : " + string);
-                //stringSet = MAPPER.readValue(string, Set.class);
                 stringSet = new HashSet<String>(Arrays.asList(string.split(",")));
-                System.out.println("resultado : " + stringSet);
-                System.out.println("cantidad : " + stringSet.size());
             } catch (Exception ex) {
                 throw new ClassHandlerException("Unable to convert " + string + " into a Set of Strings", ex);
             }
@@ -142,6 +139,27 @@ public enum ClassHandler {
 
             try {
                 dateTime = DateTime.parse(string);
+            } catch (IllegalArgumentException ex) {
+                throw new ClassHandlerException("Invalid date string: " + string, ex);
+            }
+
+            return dateTime;
+        }
+    },
+    TODAYADDNUM {
+        @Override
+        public Class getMyClass() {
+            return DateTime.class;
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public DateTime convertString(String string) throws ClassHandlerException {
+            DateTime dateTime;
+
+            try {
+                Date toDate=DateUtils.addDays(new Date(), Integer.parseInt(string));
+                dateTime = new DateTime(toDate);
             } catch (IllegalArgumentException ex) {
                 throw new ClassHandlerException("Invalid date string: " + string, ex);
             }

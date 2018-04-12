@@ -29,15 +29,14 @@ import cl.motoratrib.jsrules.RulesetExecutor;
 import cl.motoratrib.jsrules.exception.InvalidParameterException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.util.List;
 import java.util.Map;
 
 /**
- * This executor evaluates a series of rules in order.
+ *
+ * Este ejecutor evalúa una serie de reglas en orden.
  * 
- * If all rules evaluate as true, it returns the given response. Otherwise, the
- * response is null.
+ * Si todas las reglas se evalúan como verdaderas, devuelve la respuesta dada. De lo contrario, la respuesta es nula.
  * 
  * @author Marcelo
  * @param <T>
@@ -64,20 +63,21 @@ public class AllTrueRulesetExecutorImpl<T> extends RulesetExecutor<T> {
             Object rightParameter = parameters.get(ruleParamRight.getName());
 
             if (ruleParamRight.getStaticValue() == null) {
-                // check both parameters --failed rule checks return null
+                // verifique ambos parámetros - las verificaciones de reglas fallidas devuelven nulo
                 if (rule.execute(leftParameter, rightParameter) == null) {
                     result = null;
                     break;
                 }
             } else {
-                // check left parameter only -- failed rule checks return null
+                // verifique solo el parámetro izquierdo - las verificaciones de reglas fallidas devuelven nulo
                 if (rule.execute(leftParameter) == null) {
                     result = null;
                     break;
                 }
             }
         }
-        System.out.println("que chu : " + result);
+        LOGGER.debug("cool? : " + result);
+
         return result;
     }
 
