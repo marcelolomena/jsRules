@@ -49,6 +49,7 @@ public class FirstTrueRulesetListExecutorTest {
     private RulesetExecutor<String> executor;
     private final String responseMock = "mock";
     private final String rulesetName = "mockRuleset";
+    private final String rulesetType = "mockRuleset";
 
     @org.junit.Rule
     public ExpectedException exception = ExpectedException.none();
@@ -72,7 +73,7 @@ public class FirstTrueRulesetListExecutorTest {
         rulesetListMock = new ArrayList<>();
         parameters = new HashMap<>();
 
-        executor = new FirstTrueRulesetListExecutorImpl<>(rulesetName, rulesetListMock);
+        executor = new FirstTrueRulesetListExecutorImpl<>(rulesetName, rulesetType, rulesetListMock);
     }
 
     @After

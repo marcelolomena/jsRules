@@ -45,9 +45,11 @@ public class ChainTrueRulesetListExecutorImpl<T> extends RulesetListExecutor<T> 
     private final static Logger LOGGER = LoggerFactory.getLogger(FirstTrueRulesetListExecutorImpl.class);
     private final List<RulesetExecutor<T>> rulesetList;
     private final String name;
+    private final String type;
 
-    public ChainTrueRulesetListExecutorImpl(String name, List<RulesetExecutor<T>> rulesetList) {
+    public ChainTrueRulesetListExecutorImpl(String name, String type, List<RulesetExecutor<T>> rulesetList) {
         this.name = name;
+        this.type = type;
         this.rulesetList = rulesetList;
     }
 
@@ -58,13 +60,26 @@ public class ChainTrueRulesetListExecutorImpl<T> extends RulesetListExecutor<T> 
         Ejecutar todas las reglas hasta que se encuentre una respuesta; si todas son falsas, devolver nulo
         */
         for (RulesetExecutor<T> ruleSet : rulesetList) {
-            LOGGER.debug("--------> " + ruleSet.getName());
+            //LOGGER.debug("ruleSet.getName --------> " + ruleSet.getName());
+            //LOGGER.debug("ruleSet.getType --------> " + ruleSet.getType());
+
             T ruleResponse = ruleSet.execute(parameters);
-            if (ruleResponse != null) {
-                result = ruleResponse;
-                break;
+
+            LOGGER.debug("VECTOR DE VERDAD --------> " + ruleResponse.toString());
+
+            if(ruleSet.getType().equals("BOOLEANARRAY")) {
+                parameters.put("fila", ruleResponse.toString());
+            }
+
+            if(!ruleSet.getType().equals("BOOLEANARRAY")) {
+                if (ruleResponse != null) {
+                    result = ruleResponse;
+                    break;
+                }
             }
         }
+
+
         return result;
     }
 
@@ -73,4 +88,8 @@ public class ChainTrueRulesetListExecutorImpl<T> extends RulesetListExecutor<T> 
         return name;
     }
 
+    @Override
+    public String getType() {
+        return type;
+    }
 }

@@ -45,11 +45,13 @@ public class AllTrueRulesetExecutorImpl<T> extends RulesetExecutor<T> {
     private final static Logger LOGGER = LoggerFactory.getLogger(AllTrueRulesetExecutorImpl.class);
 
     private final List<RuleExecutor> ruleSet;
+    private String type;
     private final T response;
     private String name;
 
-    public AllTrueRulesetExecutorImpl(String name, List<RuleExecutor> ruleSet, T response) {
+    public AllTrueRulesetExecutorImpl(String name, String type, List<RuleExecutor> ruleSet, T response) {
         this.name = name;
+        this.type = type;
         this.ruleSet = ruleSet;
         this.response = response;
     }
@@ -84,6 +86,11 @@ public class AllTrueRulesetExecutorImpl<T> extends RulesetExecutor<T> {
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public String getType() {
+        return type;
     }
 
 }

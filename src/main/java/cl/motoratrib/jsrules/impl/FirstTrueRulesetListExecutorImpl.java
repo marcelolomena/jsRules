@@ -45,9 +45,11 @@ public class FirstTrueRulesetListExecutorImpl<T> extends RulesetListExecutor<T> 
     private final static Logger LOGGER = LoggerFactory.getLogger(FirstTrueRulesetListExecutorImpl.class);
     private final List<RulesetExecutor<T>> rulesetList;
     private final String name;
+    private final String type;
 
-    public FirstTrueRulesetListExecutorImpl(String name, List<RulesetExecutor<T>> rulesetList) {
+    public FirstTrueRulesetListExecutorImpl(String name, String type, List<RulesetExecutor<T>> rulesetList) {
         this.name = name;
+        this.type = type;
         this.rulesetList = rulesetList;
     }
 
@@ -71,6 +73,11 @@ public class FirstTrueRulesetListExecutorImpl<T> extends RulesetListExecutor<T> 
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public String getType() {
+        return type;
     }
 
 }

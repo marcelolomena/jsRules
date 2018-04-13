@@ -35,4 +35,6 @@ public abstract class RulesetExecutor<T> extends Executor {
     public abstract T execute(Map<String, Object> parameters) throws InvalidParameterException;
 
     public abstract String getName();
+
+    public abstract String getType();
 }

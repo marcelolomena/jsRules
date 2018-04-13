@@ -51,6 +51,7 @@ public class AllTrueRulesetExecutorTest {
     private RulesetExecutor<String> executor;
     private String responseMock = "mock";
     private String rulesetName = "mockRuleset";
+    private String rulesetType = "mockType";
 
     @org.junit.Rule
     public ExpectedException exception= ExpectedException.none();
@@ -71,7 +72,7 @@ public class AllTrueRulesetExecutorTest {
     @Before
     public void setUp() {
         ruleListMock = new ArrayList<>();
-        executor = new AllTrueRulesetExecutorImpl<>(rulesetName, ruleListMock, responseMock);
+        executor = new AllTrueRulesetExecutorImpl<>(rulesetName, rulesetType, ruleListMock, responseMock);
     }
     
     @After

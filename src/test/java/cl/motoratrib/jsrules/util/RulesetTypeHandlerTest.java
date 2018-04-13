@@ -43,6 +43,7 @@ import static org.junit.Assert.assertTrue;
 @RunWith(MockitoJUnitRunner.class)
 public class RulesetTypeHandlerTest {
     private final String rulesetName = "mockRuleset";
+    private String rulesetType = "mockType";
 
     @Mock
     List<Executor> ruleSet;
@@ -73,27 +74,27 @@ public class RulesetTypeHandlerTest {
     public void AllTrueTest() {
         RulesetTypeHandler handler = RulesetTypeHandler.ALLTRUE;
 
-        assertTrue(handler.getRulesetExecutor(rulesetName, ruleSet, response) instanceof AllTrueRulesetExecutorImpl);
+        assertTrue(handler.getRulesetExecutor(rulesetName, rulesetType, ruleSet, response) instanceof AllTrueRulesetExecutorImpl);
     }
 
     @Test
     public void FirstTrueTest() {
         RulesetTypeHandler handler = RulesetTypeHandler.FIRSTTRUE;
 
-        assertTrue(handler.getRulesetExecutor(rulesetName, ruleSet, response) instanceof FirstTrueRulesetExecutorImpl);
+        assertTrue(handler.getRulesetExecutor(rulesetName, rulesetType, ruleSet, response) instanceof FirstTrueRulesetExecutorImpl);
     }
 
     @Test
     public void AllTrueListTest() {
         RulesetTypeHandler handler = RulesetTypeHandler.ALLTRUELIST;
 
-        assertTrue(handler.getRulesetExecutor(rulesetName, ruleSet, response) instanceof AllTrueRulesetListExecutorImpl);
+        assertTrue(handler.getRulesetExecutor(rulesetName, rulesetType, ruleSet, response) instanceof AllTrueRulesetListExecutorImpl);
     }
 
     @Test
     public void FirstTrueListTest() {
         RulesetTypeHandler handler = RulesetTypeHandler.FIRSTTRUELIST;
 
-        assertTrue(handler.getRulesetExecutor(rulesetName, ruleSet, response) instanceof FirstTrueRulesetListExecutorImpl);
+        assertTrue(handler.getRulesetExecutor(rulesetName, rulesetType, ruleSet, response) instanceof FirstTrueRulesetListExecutorImpl);
     }
 }

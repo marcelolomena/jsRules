@@ -43,9 +43,11 @@ public class AllTrueRulesetListExecutorImpl<T> extends RulesetListExecutor<T> {
     private final List<RulesetExecutor> rulesetList;
     private final T response;
     private final String name;
+    private final String type;
 
-    public AllTrueRulesetListExecutorImpl(String name, List<RulesetExecutor> rulesetList, T response) {
+    public AllTrueRulesetListExecutorImpl(String name, String type, List<RulesetExecutor> rulesetList, T response) {
         this.name = name;
+        this.type = type;
         this.rulesetList = rulesetList;
         this.response = response;
     }
@@ -65,6 +67,11 @@ public class AllTrueRulesetListExecutorImpl<T> extends RulesetListExecutor<T> {
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public String getType() {
+        return type;
     }
 
 }

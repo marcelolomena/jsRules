@@ -8,19 +8,6 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Map;
 
-
-
-class ChainValue<R> {
-    R obj;
-
-    public ChainValue(R o) {
-        obj = o;
-    }
-
-    public String classType() {
-        return obj.getClass().getName();
-    }
-}
 /**
  *
  * Este ejecutor evalúa una serie de reglas en orden, y acumula su valor de verdad.
@@ -36,9 +23,11 @@ public class BooleanArrayExecutorImpl<T> extends RulesetExecutor<T> {
     private final List<RuleExecutor> ruleSet;
     private final T response;
     private String name;
+    private String type;
 
-    public BooleanArrayExecutorImpl(String name, List<RuleExecutor> ruleSet, T response) {
+    public BooleanArrayExecutorImpl(String name, String type, List<RuleExecutor> ruleSet, T response) {
         this.name = name;
+        this.type = type;
         this.ruleSet = ruleSet;
         this.response = response;
     }
@@ -62,10 +51,8 @@ public class BooleanArrayExecutorImpl<T> extends RulesetExecutor<T> {
             }
             accum += booleanValue;
         }
-        //ChainValue cv= new ChainValue(accum);
-        //result = cv;
+
         result = (T)accum;
-        //LOGGER.debug("cool? : " + result);
 
         return result;
     }
@@ -75,4 +62,8 @@ public class BooleanArrayExecutorImpl<T> extends RulesetExecutor<T> {
         return name;
     }
 
+    @Override
+    public String getType() {
+        return type;
+    }
 }
