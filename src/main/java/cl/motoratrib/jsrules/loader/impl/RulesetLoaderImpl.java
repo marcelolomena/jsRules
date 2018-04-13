@@ -9,6 +9,8 @@ import cl.motoratrib.jsrules.impl.RuleExecutorImpl;
 import cl.motoratrib.jsrules.loader.RulesetLoader;
 import cl.motoratrib.jsrules.util.ClassHandler;
 import cl.motoratrib.jsrules.util.RulesetTypeHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +19,7 @@ import java.util.List;
  * Created by Marcelo Lomeña 5/14/2018
  */
 public class RulesetLoaderImpl implements RulesetLoader {
+    private final static Logger LOGGER = LoggerFactory.getLogger(RulesetLoaderImpl.class);
     private JsRules jsRules;
 
     public RulesetLoaderImpl(JsRules jsRules) {
@@ -32,6 +35,7 @@ public class RulesetLoaderImpl implements RulesetLoader {
         } else {
             throw new InvalidConfigException("Ruleset Type must be provided");
         }
+        //LOGGER.debug("tipo -------->" + type);
         RulesetTypeHandler rulesetTypeHandler = RulesetTypeHandler.valueOf(type);
 
         ResponseConfig responseConfig = config.getResponseConfig();

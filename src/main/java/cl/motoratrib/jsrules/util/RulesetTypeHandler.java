@@ -6,7 +6,8 @@ import cl.motoratrib.jsrules.impl.AllTrueRulesetExecutorImpl;
 import cl.motoratrib.jsrules.impl.AllTrueRulesetListExecutorImpl;
 import cl.motoratrib.jsrules.impl.FirstTrueRulesetExecutorImpl;
 import cl.motoratrib.jsrules.impl.FirstTrueRulesetListExecutorImpl;
-
+import cl.motoratrib.jsrules.impl.BooleanArrayExecutorImpl;
+import cl.motoratrib.jsrules.impl.ChainTrueRulesetListExecutorImpl;
 import java.util.List;
 
 /**
@@ -37,6 +38,18 @@ public enum RulesetTypeHandler {
             return false;
         }
     },
+    BOOLEANARRAY {
+        @Override
+        @SuppressWarnings("unchecked")
+        public RulesetExecutor getRulesetExecutor(String name, List<Executor> ruleSet, Object response) {
+            return new BooleanArrayExecutorImpl(name, ruleSet, response);
+        }
+
+        @Override
+        public boolean isRulesetListExecutor() {
+            return false;
+        }
+    },
     ALLTRUELIST {
         @Override
         @SuppressWarnings("unchecked")
@@ -54,6 +67,18 @@ public enum RulesetTypeHandler {
         @SuppressWarnings("unchecked")
         public RulesetExecutor getRulesetExecutor(String name, List<Executor> ruleSet, Object response) {
             return new FirstTrueRulesetListExecutorImpl(name, ruleSet);
+        }
+
+        @Override
+        public boolean isRulesetListExecutor() {
+            return true;
+        }
+    },
+    CHAINTRUELIST {
+        @Override
+        @SuppressWarnings("unchecked")
+        public RulesetExecutor getRulesetExecutor(String name, List<Executor> ruleSet, Object response) {
+            return new ChainTrueRulesetListExecutorImpl(name, ruleSet);
         }
 
         @Override

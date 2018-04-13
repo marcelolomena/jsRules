@@ -23,61 +23,48 @@
  */
 package cl.motoratrib.jsrules.impl;
 
-import cl.motoratrib.jsrules.Parameter;
-import cl.motoratrib.jsrules.RuleExecutor;
 import cl.motoratrib.jsrules.RulesetExecutor;
+import cl.motoratrib.jsrules.RulesetListExecutor;
 import cl.motoratrib.jsrules.exception.InvalidParameterException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.util.List;
 import java.util.Map;
 
 /**
+ * This executor evaluates a series of rulesets in order.
+ * <p/>
+ * If all rulesets evaluate as true, it returns the given response. Otherwise, the
+ * response is null.
  *
- * Este ejecutor evalúa una serie de reglas en orden.
- * 
- * Si todas las reglas se evalúan como verdaderas, devuelve la respuesta dada. De lo contrario, la respuesta es nula.
- * 
- * @author Marcelo
  * @param <T>
+ * @author Marcelo
  */
-public class AllTrueRulesetExecutorImpl<T> extends RulesetExecutor<T> {
-    private final static Logger LOGGER = LoggerFactory.getLogger(AllTrueRulesetExecutorImpl.class);
+public class ChainTrueRulesetListExecutorImpl<T> extends RulesetListExecutor<T> {
+    private final static Logger LOGGER = LoggerFactory.getLogger(FirstTrueRulesetListExecutorImpl.class);
+    private final List<RulesetExecutor<T>> rulesetList;
+    private final String name;
 
-    private final List<RuleExecutor> ruleSet;
-    private final T response;
-    private String name;
-
-    public AllTrueRulesetExecutorImpl(String name, List<RuleExecutor> ruleSet, T response) {
+    public ChainTrueRulesetListExecutorImpl(String name, List<RulesetExecutor<T>> rulesetList) {
         this.name = name;
-        this.ruleSet = ruleSet;
-        this.response = response;
+        this.rulesetList = rulesetList;
     }
-    
+
     @Override
     public T execute(Map<String, Object> parameters) throws InvalidParameterException {
-        T result = response;
-        for(RuleExecutor rule:ruleSet) {
-            Parameter ruleParamRight = rule.getRightParameter();
-            Object leftParameter = parameters.get(rule.getLeftParameter().getName());
-            Object rightParameter = parameters.get(ruleParamRight.getName());
-
-            if (ruleParamRight.getStaticValue() == null) {
-                // verifique ambos parámetros - las verificaciones de reglas fallidas devuelven nulo
-                if (rule.execute(leftParameter, rightParameter) == null) {
-                    result = null;
-                    break;
-                }
-            } else {
-                // verifique solo el parámetro izquierdo - las verificaciones de reglas fallidas devuelven nulo
-                if (rule.execute(leftParameter) == null) {
-                    result = null;
-                    break;
-                }
+        T result = null;
+        /*
+        Ejecutar todas las reglas hasta que se encuentre una respuesta; si todas son falsas, devolver nulo
+        */
+        for (RulesetExecutor<T> ruleSet : rulesetList) {
+            LOGGER.debug("--------> " + ruleSet.getName());
+            T ruleResponse = ruleSet.execute(parameters);
+            if (ruleResponse != null) {
+                result = ruleResponse;
+                break;
             }
         }
-        //LOGGER.debug("cool? : " + result);
-
         return result;
     }
 
