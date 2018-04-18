@@ -115,6 +115,7 @@ public enum ClassHandler {
         @Override
         @SuppressWarnings("unchecked")
         public Set<Number> convertString(String string) throws ClassHandlerException {
+
             Set<Number> numberSet;
                     
             try {

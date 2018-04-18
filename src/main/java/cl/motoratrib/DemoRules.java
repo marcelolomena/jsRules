@@ -34,6 +34,8 @@ public class DemoRules {
             LOGGER.error("Falta el nombre del archivo");
         } else if (args.length == 1){
 
+            long startTime = System.currentTimeMillis();
+
             //lee nombre archivo json desde connsola
             fileJson = args[0];
 
@@ -60,12 +62,15 @@ public class DemoRules {
                 response = new ClaseGenerica(o);
 
             if(response!=null) {
-                if (response.classType().equals("java.lang.String"))
+                if (response.classType().equals("java.lang.String")) {
                     LOGGER.info("Respuesta : " + response.obj.toString());
+                }
             }else{
                 LOGGER.info("Respuesta : " + response );
             }
 
+            long endTime = System.currentTimeMillis();
+            LOGGER.info("Eso es todo " + (endTime - startTime) + " milliseconds");
 
         }
 

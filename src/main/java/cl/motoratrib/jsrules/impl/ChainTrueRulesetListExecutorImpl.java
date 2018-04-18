@@ -65,7 +65,7 @@ public class ChainTrueRulesetListExecutorImpl<T> extends RulesetListExecutor<T> 
 
             T ruleResponse = ruleSet.execute(parameters);
 
-            LOGGER.debug("VECTOR DE VERDAD --------> " + ruleResponse.toString());
+            //LOGGER.debug("VECTOR DE VERDAD --------> " + ruleResponse.toString());
 
             if(ruleSet.getType().equals("BOOLEANARRAY")) {
                 parameters.put("fila", ruleResponse.toString());
