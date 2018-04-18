@@ -59,13 +59,15 @@ public class ChainTrueRulesetListExecutorImpl<T> extends RulesetListExecutor<T> 
         /*
         Ejecutar todas las reglas hasta que se encuentre una respuesta; si todas son falsas, devolver nulo
         */
+        LOGGER.debug("LARGO DE LA LISTA --------> " + rulesetList.size());
         for (RulesetExecutor<T> ruleSet : rulesetList) {
             //LOGGER.debug("ruleSet.getName --------> " + ruleSet.getName());
             //LOGGER.debug("ruleSet.getType --------> " + ruleSet.getType());
 
             T ruleResponse = ruleSet.execute(parameters);
 
-            //LOGGER.debug("VECTOR DE VERDAD --------> " + ruleResponse.toString());
+            if(ruleResponse!=null)
+                LOGGER.debug("VECTOR DE VERDAD --------> " + ruleResponse.toString());
 
             if(ruleSet.getType().equals("BOOLEANARRAY")) {
                 parameters.put("fila", ruleResponse.toString());
