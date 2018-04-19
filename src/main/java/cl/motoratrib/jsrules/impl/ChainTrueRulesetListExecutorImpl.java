@@ -26,10 +26,13 @@ package cl.motoratrib.jsrules.impl;
 import cl.motoratrib.jsrules.RulesetExecutor;
 import cl.motoratrib.jsrules.RulesetListExecutor;
 import cl.motoratrib.jsrules.exception.InvalidParameterException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 
 /**
@@ -59,28 +62,31 @@ public class ChainTrueRulesetListExecutorImpl<T> extends RulesetListExecutor<T> 
         /*
         Ejecutar todas las reglas hasta que se encuentre una respuesta; si todas son falsas, devolver nulo
         */
-        LOGGER.debug("LARGO DE LA LISTA --------> " + rulesetList.size());
+
+        String listResponse = "";
+        List<T> textMessages = new ArrayList<T>();
+        ObjectMapper mapper = new ObjectMapper();
         for (RulesetExecutor<T> ruleSet : rulesetList) {
-            //LOGGER.debug("ruleSet.getName --------> " + ruleSet.getName());
-            //LOGGER.debug("ruleSet.getType --------> " + ruleSet.getType());
 
             T ruleResponse = ruleSet.execute(parameters);
 
             if(ruleResponse!=null)
-                LOGGER.debug("VECTOR DE VERDAD --------> " + ruleResponse.toString());
+                LOGGER.debug("VECTOR OF TRUTH --------> " + ruleResponse.toString());
 
             if(ruleSet.getType().equals("BOOLEANARRAY")) {
                 parameters.put("fila", ruleResponse.toString());
-            }
-
-            if(!ruleSet.getType().equals("BOOLEANARRAY")) {
+            } else {
                 if (ruleResponse != null) {
-                    result = ruleResponse;
-                    break;
+                    textMessages.add(ruleResponse);
                 }
             }
         }
-
+        try {
+            listResponse=mapper.writeValueAsString(textMessages);
+        }catch(JsonProcessingException e){
+            throw new InvalidParameterException("impossible to generate the answer");
+        }
+        result = (T)listResponse;
 
         return result;
     }
