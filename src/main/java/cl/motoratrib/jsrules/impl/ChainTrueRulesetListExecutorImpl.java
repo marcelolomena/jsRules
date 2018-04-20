@@ -69,9 +69,11 @@ public class ChainTrueRulesetListExecutorImpl<T> extends RulesetListExecutor<T> 
         for (RulesetExecutor<T> ruleSet : rulesetList) {
 
             T ruleResponse = ruleSet.execute(parameters);
-
+            //LOGGER.debug("CONDICION --------> " + ruleSet.getName());
+            /*
             if(ruleResponse!=null)
                 LOGGER.debug("VECTOR OF TRUTH --------> " + ruleResponse.toString());
+            */
 
             if(ruleSet.getType().equals("BOOLEANARRAY")) {
                 parameters.put("fila", ruleResponse.toString());
