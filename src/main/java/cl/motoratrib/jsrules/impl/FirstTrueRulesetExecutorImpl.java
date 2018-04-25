@@ -27,6 +27,8 @@ import cl.motoratrib.jsrules.Parameter;
 import cl.motoratrib.jsrules.RuleExecutor;
 import cl.motoratrib.jsrules.RulesetExecutor;
 import cl.motoratrib.jsrules.exception.InvalidParameterException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
@@ -42,6 +44,7 @@ import java.util.Map;
  * @author Marcelo
  */
 public class FirstTrueRulesetExecutorImpl<T> extends RulesetExecutor<T> {
+    private final static Logger LOGGER = LoggerFactory.getLogger(FirstTrueRulesetListExecutorImpl.class);
     private final List<RuleExecutor<T>> ruleSet;
     private String name;
     private String type;
@@ -56,6 +59,8 @@ public class FirstTrueRulesetExecutorImpl<T> extends RulesetExecutor<T> {
     public T execute(Map<String, Object> parameters) throws InvalidParameterException {
         T result = null;
         for (RuleExecutor<T> rule : ruleSet) {
+            if(rule.getRule()!=null)
+                LOGGER.debug("RULE NAME --------> " + rule.getRule().getRuleName());
             Parameter left = rule.getLeftParameter();
             String leftName = left.getName();
             Object leftParameter = parameters.get(leftName);

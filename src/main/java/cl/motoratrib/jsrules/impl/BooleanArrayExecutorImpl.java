@@ -18,7 +18,7 @@ import java.util.Map;
  * @param <T>
  */
 public class BooleanArrayExecutorImpl<T> extends RulesetExecutor<T> {
-    private final static Logger LOGGER = LoggerFactory.getLogger(AllTrueRulesetExecutorImpl.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(BooleanArrayExecutorImpl.class);
 
     private final List<RuleExecutor> ruleSet;
     private final T response;
@@ -37,6 +37,7 @@ public class BooleanArrayExecutorImpl<T> extends RulesetExecutor<T> {
         T result = response;
         String accum = "";
         for(RuleExecutor rule:ruleSet) {
+            LOGGER.debug("RULE NAME --------> " + rule.getRule().getRuleName());
             Parameter ruleParamRight = rule.getRightParameter();
             Object leftParameter = parameters.get(rule.getLeftParameter().getName());
             Object rightParameter = parameters.get(ruleParamRight.getName());
