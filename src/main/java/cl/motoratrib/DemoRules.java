@@ -131,7 +131,7 @@ public class DemoRules {
 
     }
 
-    private static Parameter containsParameter(Collection<Parameter> c, String name) {
+    public static Parameter containsParameter(Collection<Parameter> c, String name) {
         for(Parameter o : c) {
             if(o != null && o.getParameterName().equals(name)) {
                 return o;
@@ -140,7 +140,7 @@ public class DemoRules {
         return null;
     }
 
-    private static List<Parameter> containsParameters(Collection<Parameter> c, String leftOne, String leftTwo) {
+    public static List<Parameter> containsParameters(Collection<Parameter> c, String leftOne, String leftTwo) {
         int indexTrue = 0;
         List<Parameter> params = new ArrayList<Parameter>();
         for(Parameter o : c) {
@@ -156,7 +156,7 @@ public class DemoRules {
     }
 
 
-    private static InJson readJsonFullFromFile(File inFile) throws IOException {
+    public static InJson readJsonFullFromFile(File inFile) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         byte[] json = Files.readAllBytes(inFile.toPath());
         String injson = new String(json, "ISO-8859-1");
@@ -166,7 +166,7 @@ public class DemoRules {
 
     }
 
-    private static FlowException readJsonFromResult(String json) throws IOException {
+    public static FlowException readJsonFromResult(String json) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         LOGGER.debug(json);
         FlowException out = mapper.readValue(json, FlowException.class);

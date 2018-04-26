@@ -10,16 +10,19 @@ import cl.motoratrib.jsrules.loader.RulesetLoader;
 import cl.motoratrib.jsrules.loader.impl.RuleLoaderImpl;
 import cl.motoratrib.jsrules.loader.impl.RulesetLoaderImpl;
 import cl.motoratrib.tools.CacheMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
+import java.util.Properties;
 
 /**
  * Created by Marcelo Lomeña 5/13/2018
  */
 public class JsRules {
-
+    private final static Logger LOGGER = LoggerFactory.getLogger(JsRules.class);
     private static final JsRules INSTANCE = new JsRules();
 
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -29,6 +32,10 @@ public class JsRules {
     // default cache values
     private static final int CACHE_SIZE = 25;
     private static final long TIME_TO_LIVE = 15 * 60 * 1000; // 15 minutes
+
+    // default persistance
+    private static final String REPOSITORY = getRepositoryProperty("database");
+    private static final String DEFAULT_REPOSITORY = "FILE";
 
     // these maps provide rudimentary caching
     private final Map<String, Rule> ruleMap = new CacheMap<>(CACHE_SIZE, TIME_TO_LIVE);
@@ -52,7 +59,8 @@ public class JsRules {
 
         if (rule == null) {
             String fileName = ruleName + ".json";
-
+            LOGGER.debug(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> " + REPOSITORY);
+            //LOGGER.debug("###################>" + fileName);
             InputStream stream = getFileFromClasspath(fileName);
 
             if (stream == null) {
@@ -84,7 +92,7 @@ public class JsRules {
 
         if (ruleset == null) {
             String fileName = rulesetName + ".json";
-
+            LOGGER.debug("=============================>" + fileName);
             InputStream stream = getFileFromClasspath(fileName);
 
             if (stream == null) {
@@ -131,5 +139,28 @@ public class JsRules {
 
     private InputStream getFileFromClasspath(String fileName) {
         return this.getClass().getResourceAsStream("/" + fileName);
+    }
+
+    private static String getRepositoryProperty(String propName) {
+        Properties prop = new Properties();
+        InputStream in = INSTANCE.getClass().getResourceAsStream("/persistence.properties");
+        String valProperty = null;
+        try {
+            if(in!=null) {
+                prop.load(in);
+                valProperty = prop.getProperty(propName).toUpperCase();
+            }
+        } catch(IOException e){
+            return null;
+        } finally {
+            try {
+                if (in != null)
+                    in.close();
+            }catch(IOException e){
+                return null;
+            }
+
+        }
+        return valProperty;
     }
 }
