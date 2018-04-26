@@ -1,6 +1,7 @@
 package cl.motoratrib;
 
 import cl.motoratrib.jsrules.*;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.io.File;
@@ -83,17 +84,41 @@ public class DemoRules {
 
             if(response!=null) {
                 if (response.classType().equals("java.lang.String")) {
-                    LOGGER.info("Respuesta : " + response.obj.toString());
+                    //LOGGER.info("Respuesta : " + response.obj.toString());
 
                     ObjectMapper mapper = new ObjectMapper();
-                    List<FlowException> errores = Arrays.asList(mapper.readValue(response.obj.toString(), FlowException[].class));
-                    /*
+
+                    String responseJson = response.obj.toString().
+                            replace("\"{","{").
+                            replace("}\"","}").
+                            replace("\\","");
+                    //LOGGER.debug(responseJson);
+                    List<FlowException> errores = mapper.readValue(responseJson, new TypeReference<List<FlowException>>(){});
+
+                    List<FlowException> lstExceptions = new ArrayList<FlowException>();
+                    int countException = 0;
                     for(FlowException e : errores){
 
-                        LOGGER.info("ERROR : " + e.getRef());
+                        //LOGGER.info("ERROR : " + e.getRef());
+
+                        if(e.getResult() == 0){
+                            FlowException fe = new FlowException(e.getResult(),e.getRef(),e.getAlerta());
+                            lstExceptions.add(fe);
+                            countException++;
+                        }
+
                     }
 
-                    */
+                    if(countException>0){
+                        // return JSON
+                        ObjectMapper map = new ObjectMapper();
+                        String s=mapper.writeValueAsString( lstExceptions);
+                        LOGGER.info("Respuesta : " + s);
+                    }else{
+                        // sigue adelante
+                    }
+
+
                 }
             }else{
                 LOGGER.error("ERROR");
