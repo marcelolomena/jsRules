@@ -1,5 +1,9 @@
 package cl.motoratrib.jsrules;
 
+import cl.bancochile.centronegocios.controldelimites.persistencia.domain.SpGetReglaIN;
+import cl.bancochile.centronegocios.controldelimites.persistencia.domain.SpGetReglaOUT;
+import cl.bancochile.centronegocios.controldelimites.persistencia.repository.SpGetReglaDAOImpl;
+//import cl.bancochile.plataformabase.error.BusinessException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import cl.motoratrib.jsrules.config.RuleConfig;
 import cl.motoratrib.jsrules.config.RulesetConfig;
@@ -59,6 +63,15 @@ public class JsRules {
 
         if (rule == null) {
             String fileName = ruleName + ".json";
+            try {
+                SpGetReglaIN params = new SpGetReglaIN();
+                params.setPNombre(fileName);
+                SpGetReglaDAOImpl spGetRaglaDAO = new SpGetReglaDAOImpl();
+                SpGetReglaOUT spGetRaglaOUT = spGetRaglaDAO.execute(params);
+                spGetRaglaOUT.getPJson();
+            }catch(Exception e){
+                LOGGER.error(e.getMessage());
+            }
             LOGGER.debug(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> " + REPOSITORY);
             //LOGGER.debug("###################>" + fileName);
             InputStream stream = getFileFromClasspath(fileName);

@@ -36,6 +36,49 @@
     <packaging>jar</packaging>
     <dependencies>
 
+        <!-- Bco chile-->
+
+        <dependency>
+            <groupId>cl.bancochile.plataforma.shared.lib</groupId>
+            <artifactId>taurus-shared-lib-spring-jar</artifactId>
+            <version>1.1.0</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>cl.bancochile.portal.lib.shared</groupId>
+            <artifactId>shared-lib-log-jar</artifactId>
+            <version>1.0.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>cl.bancochile.plataforma.shared.lib</groupId>
+            <artifactId>taurus-shared-lib-cdncommon-extension-jar</artifactId>
+            <version>1.0.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.oracle.jdbc</groupId>
+            <artifactId>ojdbc7</artifactId>
+            <version>12.1.0.1</version>
+        </dependency>
+
+
+        <!-- Persistencia -->
+        <dependency>
+            <groupId>cl.bancochile.centronegocios.controldelimites</groupId>
+            <artifactId>reglas-persistencia</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
         <!-- Logging -->
         <dependency>
             <groupId>org.slf4j</groupId>
