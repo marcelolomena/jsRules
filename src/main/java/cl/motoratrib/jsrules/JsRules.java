@@ -1,9 +1,7 @@
 package cl.motoratrib.jsrules;
 
-import cl.bancochile.centronegocios.controldelimites.persistencia.domain.SpGetReglaIN;
-import cl.bancochile.centronegocios.controldelimites.persistencia.domain.SpGetReglaOUT;
-import cl.bancochile.centronegocios.controldelimites.persistencia.repository.SpGetReglaDAOImpl;
-//import cl.bancochile.plataformabase.error.BusinessException;
+import cl.motoratrib.jsrules.service.RuleService;
+import cl.motoratrib.jsrules.service.RuleServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import cl.motoratrib.jsrules.config.RuleConfig;
 import cl.motoratrib.jsrules.config.RulesetConfig;
@@ -16,6 +14,8 @@ import cl.motoratrib.jsrules.loader.impl.RulesetLoaderImpl;
 import cl.motoratrib.tools.CacheMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,8 +25,13 @@ import java.util.Properties;
 /**
  * Created by Marcelo Lomeña 5/13/2018
  */
+@Component
 public class JsRules {
     private final static Logger LOGGER = LoggerFactory.getLogger(JsRules.class);
+
+    //@Autowired
+    //RuleService ruleService;
+
     private static final JsRules INSTANCE = new JsRules();
 
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -39,7 +44,8 @@ public class JsRules {
 
     // default persistance
     private static final String REPOSITORY = getRepositoryProperty("database");
-    private static final String DEFAULT_REPOSITORY = "FILE";
+    private static final String FILE_REPOSITORY = "FILE";
+    private static final String ORACLE_REPOSITORY = "ORACLE";
 
     // these maps provide rudimentary caching
     private final Map<String, Rule> ruleMap = new CacheMap<>(CACHE_SIZE, TIME_TO_LIVE);
@@ -61,31 +67,44 @@ public class JsRules {
     public Rule loadRuleByName(String ruleName) throws InvalidConfigException {
         Rule rule = ruleMap.get(ruleName);
 
-        if (rule == null) {
-            String fileName = ruleName + ".json";
-            try {
-                SpGetReglaIN params = new SpGetReglaIN();
-                params.setPNombre(fileName);
-                SpGetReglaDAOImpl spGetRaglaDAO = new SpGetReglaDAOImpl();
-                SpGetReglaOUT spGetRaglaOUT = spGetRaglaDAO.execute(params);
-                spGetRaglaOUT.getPJson();
-            }catch(Exception e){
-                LOGGER.error(e.getMessage());
-            }
-            LOGGER.debug(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> " + REPOSITORY);
-            //LOGGER.debug("###################>" + fileName);
-            InputStream stream = getFileFromClasspath(fileName);
+        LOGGER.debug("REPOSITORY -------------------->> [" + REPOSITORY  +  "]");
 
-            if (stream == null) {
-                throw new InvalidConfigException("Unable to find rule file: " + fileName);
+        if(REPOSITORY.equals(FILE_REPOSITORY)) {
+            LOGGER.debug("-------------------->> FILE_REPOSITORY loadRuleByName");
+            if (rule == null) {
+                String fileName = ruleName + ".json";
+
+                InputStream stream = getFileFromClasspath(fileName);
+
+                if (stream == null) {
+                    throw new InvalidConfigException("Unable to find rule file: " + fileName);
+                }
+
+                try {
+                    RuleConfig ruleConfig = objectMapper.readValue(stream, RuleConfig.class);
+                    rule = getRule(ruleConfig);
+                } catch (IOException ex) {
+                    throw new InvalidConfigException("Unable to parse rule file: " + ruleName, ex);
+                }
+            }
+        } else if(REPOSITORY.equals(ORACLE_REPOSITORY)){
+            LOGGER.debug("-------------------->> ORACLE_REPOSITORY loadRuleByName");
+            if (rule == null) {
+
+                InputStream stream = getRecordFromDatabase(ruleName);
+
+                if (stream == null) {
+                    throw new InvalidConfigException("Unable to find rule in table record : " + ruleName);
+                }
+
+                try {
+                    RuleConfig ruleConfig = objectMapper.readValue(stream, RuleConfig.class);
+                    rule = getRule(ruleConfig);
+                } catch (IOException ex) {
+                    throw new InvalidConfigException("Unable to parse rule table record : " + ruleName, ex);
+                }
             }
 
-            try {
-                RuleConfig ruleConfig = objectMapper.readValue(stream, RuleConfig.class);
-                rule = getRule(ruleConfig);
-            } catch (IOException ex) {
-                throw new InvalidConfigException("Unable to parse rule file: " + ruleName, ex);
-            }
         }
 
         return rule;
@@ -103,20 +122,41 @@ public class JsRules {
     public RulesetExecutor loadRulesetByName(String rulesetName) throws InvalidConfigException {
         RulesetExecutor ruleset = rulesetExecutorMap.get(rulesetName);
 
-        if (ruleset == null) {
-            String fileName = rulesetName + ".json";
-            LOGGER.debug("=============================>" + fileName);
-            InputStream stream = getFileFromClasspath(fileName);
+        LOGGER.debug("REPOSITORY -------------------->> [" + REPOSITORY  +  "]");
 
-            if (stream == null) {
-                throw new InvalidConfigException("Unable to find ruleset file: " + fileName);
+        if(REPOSITORY.equals(FILE_REPOSITORY)) {
+            LOGGER.debug("-------------------->> FILE_REPOSITORY loadRulesetByName");
+            if (ruleset == null) {
+                String fileName = rulesetName + ".json";
+
+                InputStream stream = getFileFromClasspath(fileName);
+
+                if (stream == null) {
+                    throw new InvalidConfigException("Unable to find ruleset file: " + fileName);
+                }
+
+                try {
+                    RulesetConfig rulesetConfig = objectMapper.readValue(stream, RulesetConfig.class);
+                    ruleset = getRulesetExecutor(rulesetConfig);
+                } catch (IOException ex) {
+                    throw new InvalidConfigException("Unable to parse ruleset file: " + rulesetName, ex);
+                }
             }
+        }else if(REPOSITORY.equals(ORACLE_REPOSITORY)){
+            LOGGER.debug("-------------------->> ORACLE_REPOSITORY loadRuleByName");
+            if (ruleset == null) {
+                InputStream stream = getRecordFromDatabase(rulesetName);
 
-            try {
-                RulesetConfig rulesetConfig = objectMapper.readValue(stream, RulesetConfig.class);
-                ruleset = getRulesetExecutor(rulesetConfig);
-            } catch (IOException ex) {
-                throw new InvalidConfigException("Unable to parse ruleset file: " + rulesetName, ex);
+                if (stream == null) {
+                    throw new InvalidConfigException("Unable to find ruleset record : " + rulesetName);
+                }
+
+                try {
+                    RulesetConfig rulesetConfig = objectMapper.readValue(stream, RulesetConfig.class);
+                    ruleset = getRulesetExecutor(rulesetConfig);
+                } catch (IOException ex) {
+                    throw new InvalidConfigException("Unable to parse ruleset file: " + rulesetName, ex);
+                }
             }
         }
 
@@ -152,6 +192,19 @@ public class JsRules {
 
     private InputStream getFileFromClasspath(String fileName) {
         return this.getClass().getResourceAsStream("/" + fileName);
+    }
+
+    private InputStream getRecordFromDatabase(String name) {
+        InputStream is = null;
+
+        try {
+            RuleServiceImpl ruleService = new RuleServiceImpl();
+            is=ruleService.getRuleByName(name).getPJson().getAsciiStream();
+        }catch(Exception e){
+            LOGGER.error("=========================================== " + e.getMessage() + " ===========================================");
+        }
+
+        return is;
     }
 
     private static String getRepositoryProperty(String propName) {

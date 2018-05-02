@@ -111,9 +111,10 @@ public class DemoRules {
 
                     if(countException>0){
                         // return JSON
+                        LOGGER.info("COUNT ERROR : " + countException);
                         ObjectMapper map = new ObjectMapper();
                         String s=mapper.writeValueAsString( lstExceptions);
-                        LOGGER.info("Respuesta : " + s);
+
                     }else{
                         // sigue adelante
                     }
