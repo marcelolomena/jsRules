@@ -23,12 +23,12 @@ public class RuleServiceImpl implements RuleService {
     @Override
     public SpGetReglaOUT getRuleByName(String name) throws Exception {
         SpGetReglaOUT ruleValue=null;
-        LOGGER.debug("CUCHAAAAAAAAAA : "  + this.spGetReglaDAO);
+        LOGGER.debug("this.spGetReglaDAO : "  + this.spGetReglaDAO);
         try {
             SpGetReglaIN params = new SpGetReglaIN();
             params.setPNombre(name);
             ruleValue=this.spGetReglaDAO.execute(params);
-            LOGGER.debug("CHORO quedo la caga : "  + ruleValue.getPJson().toString());
+            //LOGGER.debug("CHORO quedo la caga : "  + ruleValue.getPJson().toString());
         }catch(Exception e){
             LOGGER.error("%%%%%%%%%%%%%%%%%%%%%%%%%%%% quedo la caga : "  + e.getMessage());
             throw new Exception(e.getMessage());

@@ -15,6 +15,8 @@ import cl.motoratrib.tools.CacheMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -29,8 +31,8 @@ import java.util.Properties;
 public class JsRules {
     private final static Logger LOGGER = LoggerFactory.getLogger(JsRules.class);
 
-    //@Autowired
-    //RuleService ruleService;
+    @Autowired
+    RuleService ruleService;
 
     private static final JsRules INSTANCE = new JsRules();
 
@@ -198,8 +200,12 @@ public class JsRules {
         InputStream is = null;
 
         try {
-            RuleServiceImpl ruleService = new RuleServiceImpl();
-            is=ruleService.getRuleByName(name).getPJson().getAsciiStream();
+            //RuleServiceImpl ruleService = new RuleServiceImpl();
+            ApplicationContext context =
+                    new ClassPathXmlApplicationContext("my-beans.xml");
+            JsRules potoIs = context.getBean(JsRules.class);
+            is=potoIs.ruleService.getRuleByName(name).getPJson().getAsciiStream();
+            //LOGGER.debug("como estamos?? : " + is.toString());
         }catch(Exception e){
             LOGGER.error("=========================================== " + e.getMessage() + " ===========================================");
         }
