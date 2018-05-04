@@ -1,7 +1,7 @@
 package cl.motoratrib.jsrules;
 
+import cl.bancochile.centronegocios.controldelimites.persistencia.domain.SpGetReglaOUT;
 import cl.motoratrib.jsrules.service.RuleService;
-import cl.motoratrib.jsrules.service.RuleServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import cl.motoratrib.jsrules.config.RuleConfig;
 import cl.motoratrib.jsrules.config.RulesetConfig;
@@ -12,6 +12,7 @@ import cl.motoratrib.jsrules.loader.RulesetLoader;
 import cl.motoratrib.jsrules.loader.impl.RuleLoaderImpl;
 import cl.motoratrib.jsrules.loader.impl.RulesetLoaderImpl;
 import cl.motoratrib.tools.CacheMap;
+import oracle.jdbc.OracleClob;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +20,11 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Component;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Reader;
+import java.sql.SQLException;
 import java.util.Map;
 import java.util.Properties;
 
@@ -57,6 +61,9 @@ public class JsRules {
         return INSTANCE;
     }
 
+    private static ApplicationContext context =
+            new ClassPathXmlApplicationContext("my-beans.xml");
+
     public Rule loadRuleByJson(String json) throws InvalidConfigException {
         try {
             RuleConfig ruleConfig = objectMapper.readValue(json, RuleConfig.class);
@@ -72,7 +79,7 @@ public class JsRules {
         LOGGER.debug("REPOSITORY -------------------->> [" + REPOSITORY  +  "]");
 
         if(REPOSITORY.equals(FILE_REPOSITORY)) {
-            LOGGER.debug("-------------------->> FILE_REPOSITORY loadRuleByName");
+
             if (rule == null) {
                 String fileName = ruleName + ".json";
 
@@ -90,7 +97,7 @@ public class JsRules {
                 }
             }
         } else if(REPOSITORY.equals(ORACLE_REPOSITORY)){
-            LOGGER.debug("-------------------->> ORACLE_REPOSITORY loadRuleByName");
+
             if (rule == null) {
 
                 InputStream stream = getRecordFromDatabase(ruleName);
@@ -103,7 +110,7 @@ public class JsRules {
                     RuleConfig ruleConfig = objectMapper.readValue(stream, RuleConfig.class);
                     rule = getRule(ruleConfig);
                 } catch (IOException ex) {
-                    throw new InvalidConfigException("Unable to parse rule table record : " + ruleName, ex);
+                    throw new InvalidConfigException("Unable to parse rule record : " + ruleName, ex);
                 }
             }
 
@@ -127,7 +134,7 @@ public class JsRules {
         LOGGER.debug("REPOSITORY -------------------->> [" + REPOSITORY  +  "]");
 
         if(REPOSITORY.equals(FILE_REPOSITORY)) {
-            LOGGER.debug("-------------------->> FILE_REPOSITORY loadRulesetByName");
+
             if (ruleset == null) {
                 String fileName = rulesetName + ".json";
 
@@ -145,7 +152,7 @@ public class JsRules {
                 }
             }
         }else if(REPOSITORY.equals(ORACLE_REPOSITORY)){
-            LOGGER.debug("-------------------->> ORACLE_REPOSITORY loadRuleByName");
+
             if (ruleset == null) {
                 InputStream stream = getRecordFromDatabase(rulesetName);
 
@@ -157,7 +164,7 @@ public class JsRules {
                     RulesetConfig rulesetConfig = objectMapper.readValue(stream, RulesetConfig.class);
                     ruleset = getRulesetExecutor(rulesetConfig);
                 } catch (IOException ex) {
-                    throw new InvalidConfigException("Unable to parse ruleset file: " + rulesetName, ex);
+                    throw new InvalidConfigException("Unable to parse ruleset record: " + rulesetName, ex);
                 }
             }
         }
@@ -200,14 +207,31 @@ public class JsRules {
         InputStream is = null;
 
         try {
-            //RuleServiceImpl ruleService = new RuleServiceImpl();
-            ApplicationContext context =
-                    new ClassPathXmlApplicationContext("my-beans.xml");
-            JsRules potoIs = context.getBean(JsRules.class);
-            is=potoIs.ruleService.getRuleByName(name).getPJson().getAsciiStream();
-            //LOGGER.debug("como estamos?? : " + is.toString());
+            if(context == null) throw new Exception("context is null");
+            //LOGGER.debug("OK context");
+
+            JsRules beanRule = context.getBean(JsRules.class);
+
+            if(beanRule == null) throw new Exception("beanRule is null");
+            //LOGGER.debug("OK beanRule");
+
+            SpGetReglaOUT spOut = beanRule.ruleService.getRuleByName(name);
+
+            if(spOut == null) throw new Exception("spOut is null");
+            //LOGGER.debug("OK spOut");
+
+            OracleClob oc = spOut.getPJson();
+
+            if(oc == null) throw new Exception("oc is null");
+            //LOGGER.debug("OK oc");
+
+            //LOGGER.debug("EL JSON DE ORACLE ------------> [" + convertToString(oc) + "]");
+            is=oc.getAsciiStream();
+            if(is == null) throw new Exception("is is null");
+            //LOGGER.debug("OK is");
+
         }catch(Exception e){
-            LOGGER.error("=========================================== " + e.getMessage() + " ===========================================");
+            LOGGER.error("#=========================================== " + e.getMessage() + " ===========================================#");
         }
 
         return is;
@@ -234,5 +258,42 @@ public class JsRules {
 
         }
         return valProperty;
+    }
+
+    private String convertToString(java.sql.Clob data)
+    {
+        final StringBuilder builder= new StringBuilder();
+
+        try
+        {
+            if(data == null)  throw new Exception("data is null");
+            final Reader reader = data.getCharacterStream();
+            final BufferedReader br     = new BufferedReader(reader);
+            if(br == null)  throw new Exception("buffer is null");
+            int b;
+            while(-1 != (b = br.read()))
+            {
+                builder.append((char)b);
+            }
+
+            br.close();
+        }
+        catch (SQLException e)
+        {
+            LOGGER.error("Within SQLException, Could not convert CLOB to string",e);
+            return e.toString();
+        }
+        catch (IOException e)
+        {
+            LOGGER.error("Within IOException, Could not convert CLOB to string",e);
+            return e.toString();
+        }
+        catch (Exception e)
+        {
+            LOGGER.error("Within Exception, Could not convert CLOB to string",e);
+            return e.toString();
+        }
+
+        return builder.toString();
     }
 }

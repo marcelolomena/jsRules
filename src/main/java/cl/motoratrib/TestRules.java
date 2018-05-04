@@ -2,25 +2,13 @@ package cl.motoratrib;
 
 import cl.motoratrib.jsrules.*;
 import java.io.File;
-import java.io.InputStream;
 import java.util.*;
-
-import cl.motoratrib.jsrules.service.RuleService;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.stereotype.Component;
 
-
-@Component
 public class TestRules {
-    @Autowired
-    RuleService ruleService;
-
     private static final Logger LOGGER = LoggerFactory.getLogger(DemoRules.class);
     public static void main (String [ ] args) throws Exception {
 
@@ -28,17 +16,6 @@ public class TestRules {
         String fileJson = "";
         Parameter p5_fechaPep, p5_fechaVencMac = null;
 
-        ApplicationContext context =
-                new ClassPathXmlApplicationContext("my-beans.xml");
-        /*
-        try {
-            TestRules potoIs = context.getBean(TestRules.class);
-            InputStream is = potoIs.ruleService.getRuleByName("POC_1_RulesetList").getPJson().getAsciiStream();
-            LOGGER.debug("InputStream : " + is.toString());
-        }catch(Exception e){
-            LOGGER.error("no funciona : " +  e.getMessage());
-        }
-        */
 
         if (args.length == 0) {
             LOGGER.error("Falta el nombre del archivo");
