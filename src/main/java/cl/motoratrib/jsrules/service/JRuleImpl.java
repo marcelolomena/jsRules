@@ -1,23 +1,20 @@
-package cl.motoratrib;
+package cl.motoratrib.jsrules.service;
 
 import cl.bancochile.centronegocios.controldelimites.persistencia.domain.SpGetReglaOUT;
-import cl.motoratrib.jsrules.JRule;
 import cl.motoratrib.jsrules.Rule;
 import cl.motoratrib.jsrules.RulesetExecutor;
 import cl.motoratrib.jsrules.config.RuleConfig;
 import cl.motoratrib.jsrules.config.RulesetConfig;
 import cl.motoratrib.jsrules.exception.InvalidConfigException;
 import cl.motoratrib.jsrules.exception.JsRulesException;
-import cl.motoratrib.jsrules.loader.impl.RuleLoaderImpl;
+import cl.motoratrib.jsrules.loader.impl.RuleMigraLoaderImpl;
 import cl.motoratrib.jsrules.loader.impl.RulesetMigraLoaderImpl;
-import cl.motoratrib.jsrules.service.RuleService;
 import cl.motoratrib.tools.CacheMap;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import oracle.jdbc.OracleClob;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -26,7 +23,6 @@ import java.io.Reader;
 import java.sql.SQLException;
 import java.util.Map;
 
-@Service
 public class JRuleImpl implements JRule {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(JRuleImpl.class);
@@ -41,13 +37,10 @@ public class JRuleImpl implements JRule {
     RuleService ruleService;
 
     @Autowired
-    private RuleLoaderImpl ruleLoader;
+    RuleMigraLoaderImpl ruleLoader;
 
     @Autowired
-    private RulesetMigraLoaderImpl rulesetLoader;
-
-    //private final RuleLoader ruleLoader = new RuleLoaderImpl();
-    //private final RulesetLoader rulesetLoader = new RulesetLoaderImpl(this);
+    RulesetMigraLoaderImpl rulesetLoader;
 
     // these maps provide rudimentary caching
     private final Map<String, Rule> ruleMap = new CacheMap<>(CACHE_SIZE, TIME_TO_LIVE);
@@ -55,7 +48,9 @@ public class JRuleImpl implements JRule {
 
     @Override
     public <T> T executeRuleset(String rulesetName, Map<String, Object> parameters) throws JsRulesException {
-        return null;
+        RulesetExecutor<T> executor = loadRulesetByName(rulesetName);
+
+        return executor.execute(parameters);
     }
 
     public Rule loadRuleByJson(String json) throws InvalidConfigException {
@@ -67,25 +62,25 @@ public class JRuleImpl implements JRule {
         }
     }
 
+    @Override
     public Rule loadRuleByName(String ruleName) throws InvalidConfigException {
         Rule rule = ruleMap.get(ruleName);
 
-            if (rule == null) {
+        if (rule == null) {
 
-                InputStream stream = getRecordFromDatabase(ruleName);
+            InputStream stream = getRecordFromDatabase(ruleName);
 
-                if (stream == null) {
-                    throw new InvalidConfigException("Unable to find rule in table record : " + ruleName);
-                }
-
-                try {
-                    RuleConfig ruleConfig = objectMapper.readValue(stream, RuleConfig.class);
-                    rule = getRule(ruleConfig);
-                } catch (IOException ex) {
-                    throw new InvalidConfigException("Unable to parse rule record : " + ruleName, ex);
-                }
+            if (stream == null) {
+                throw new InvalidConfigException("Unable to find rule in table record : " + ruleName);
             }
 
+            try {
+                RuleConfig ruleConfig = objectMapper.readValue(stream, RuleConfig.class);
+                rule = getRule(ruleConfig);
+            } catch (IOException ex) {
+                throw new InvalidConfigException("Unable to parse rule record : " + ruleName, ex);
+            }
+        }
 
 
         return rule;
@@ -100,29 +95,29 @@ public class JRuleImpl implements JRule {
         }
     }
 
+    @Override
     public RulesetExecutor loadRulesetByName(String rulesetName) throws InvalidConfigException {
         RulesetExecutor ruleset = rulesetExecutorMap.get(rulesetName);
 
 
-            if (ruleset == null) {
-                InputStream stream = getRecordFromDatabase(rulesetName);
+        if (ruleset == null) {
+            InputStream stream = getRecordFromDatabase(rulesetName);
 
-                if (stream == null) {
-                    throw new InvalidConfigException("Unable to find ruleset record : " + rulesetName);
-                }
-
-                try {
-                    RulesetConfig rulesetConfig = objectMapper.readValue(stream, RulesetConfig.class);
-                    ruleset = getRulesetExecutor(rulesetConfig);
-                } catch (IOException ex) {
-                    throw new InvalidConfigException("Unable to parse ruleset record: " + rulesetName, ex);
-                }
+            if (stream == null) {
+                throw new InvalidConfigException("Unable to find ruleset record : " + rulesetName);
             }
+
+            try {
+                RulesetConfig rulesetConfig = objectMapper.readValue(stream, RulesetConfig.class);
+                ruleset = getRulesetExecutor(rulesetConfig);
+            } catch (IOException ex) {
+                throw new InvalidConfigException("Unable to parse ruleset record: " + rulesetName, ex);
+            }
+        }
 
 
         return ruleset;
     }
-
 
 
     private Rule getRule(RuleConfig ruleConfig) throws InvalidConfigException {
@@ -156,20 +151,20 @@ public class JRuleImpl implements JRule {
 
             SpGetReglaOUT spOut = ruleService.getRuleByName(name);
 
-            if(spOut == null) throw new Exception("spOut is null");
+            if (spOut == null) throw new Exception("spOut is null");
             //LOGGER.debug("OK spOut");
 
             OracleClob oc = spOut.getPJson();
 
-            if(oc == null) throw new Exception("oc is null");
+            if (oc == null) throw new Exception("oc is null");
             //LOGGER.debug("OK oc");
 
             //LOGGER.debug("EL JSON DE ORACLE ------------> [" + convertToString(oc) + "]");
-            is=oc.getAsciiStream();
-            if(is == null) throw new Exception("is is null");
+            is = oc.getAsciiStream();
+            if (is == null) throw new Exception("is is null");
             //LOGGER.debug("OK is");
 
-        }catch(Exception e){
+        } catch (Exception e) {
             LOGGER.error("#=========================================== " + e.getMessage() + " ===========================================#");
         }
 
@@ -177,46 +172,31 @@ public class JRuleImpl implements JRule {
     }
 
 
-    private String convertToString(java.sql.Clob data)
-    {
-        final StringBuilder builder= new StringBuilder();
+    private String convertToString(java.sql.Clob data) {
+        final StringBuilder builder = new StringBuilder();
 
-        try
-        {
-            if(data == null)  throw new Exception("data is null");
+        try {
+            if (data == null) throw new Exception("data is null");
             final Reader reader = data.getCharacterStream();
-            final BufferedReader br     = new BufferedReader(reader);
-            if(br == null)  throw new Exception("buffer is null");
+            final BufferedReader br = new BufferedReader(reader);
+            if (br == null) throw new Exception("buffer is null");
             int b;
-            while(-1 != (b = br.read()))
-            {
-                builder.append((char)b);
+            while (-1 != (b = br.read())) {
+                builder.append((char) b);
             }
 
             br.close();
-        }
-        catch (SQLException e)
-        {
-            LOGGER.error("Within SQLException, Could not convert CLOB to string",e);
+        } catch (SQLException e) {
+            LOGGER.error("Within SQLException, Could not convert CLOB to string", e);
             return e.toString();
-        }
-        catch (IOException e)
-        {
-            LOGGER.error("Within IOException, Could not convert CLOB to string",e);
+        } catch (IOException e) {
+            LOGGER.error("Within IOException, Could not convert CLOB to string", e);
             return e.toString();
-        }
-        catch (Exception e)
-        {
-            LOGGER.error("Within Exception, Could not convert CLOB to string",e);
+        } catch (Exception e) {
+            LOGGER.error("Within Exception, Could not convert CLOB to string", e);
             return e.toString();
         }
 
         return builder.toString();
     }
-
-
-
-
-
-
 }
