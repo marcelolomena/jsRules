@@ -61,7 +61,7 @@ public class JsRules {
     }
 
     private static ApplicationContext context =
-            new ClassPathXmlApplicationContext("my-beans.xml");
+            new ClassPathXmlApplicationContext("spring/my-beans.xml");
 
     public Rule loadRuleByJson(String json) throws InvalidConfigException {
         try {

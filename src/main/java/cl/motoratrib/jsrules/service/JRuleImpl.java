@@ -7,14 +7,15 @@ import cl.motoratrib.jsrules.config.RuleConfig;
 import cl.motoratrib.jsrules.config.RulesetConfig;
 import cl.motoratrib.jsrules.exception.InvalidConfigException;
 import cl.motoratrib.jsrules.exception.JsRulesException;
-import cl.motoratrib.jsrules.loader.impl.RuleMigraLoaderImpl;
-import cl.motoratrib.jsrules.loader.impl.RulesetMigraLoaderImpl;
+import cl.motoratrib.jsrules.loader.RuleLoader;
+import cl.motoratrib.jsrules.loader.RulesetLoader;
 import cl.motoratrib.tools.CacheMap;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import oracle.jdbc.OracleClob;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -23,6 +24,7 @@ import java.io.Reader;
 import java.sql.SQLException;
 import java.util.Map;
 
+@Service
 public class JRuleImpl implements JRule {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(JRuleImpl.class);
@@ -37,10 +39,10 @@ public class JRuleImpl implements JRule {
     RuleService ruleService;
 
     @Autowired
-    RuleMigraLoaderImpl ruleLoader;
+    RuleLoader ruleLoader;
 
     @Autowired
-    RulesetMigraLoaderImpl rulesetLoader;
+    RulesetLoader rulesetLoader;
 
     // these maps provide rudimentary caching
     private final Map<String, Rule> ruleMap = new CacheMap<>(CACHE_SIZE, TIME_TO_LIVE);
@@ -53,7 +55,7 @@ public class JRuleImpl implements JRule {
         return executor.execute(parameters);
     }
 
-    public Rule loadRuleByJson(String json) throws InvalidConfigException {
+    private Rule loadRuleByJson(String json) throws InvalidConfigException {
         try {
             RuleConfig ruleConfig = objectMapper.readValue(json, RuleConfig.class);
             return getRule(ruleConfig);
@@ -86,7 +88,7 @@ public class JRuleImpl implements JRule {
         return rule;
     }
 
-    public RulesetExecutor loadRulesetByJson(String json) throws InvalidConfigException {
+    private RulesetExecutor loadRulesetByJson(String json) throws InvalidConfigException {
         try {
             RulesetConfig rulesetConfig = objectMapper.readValue(json, RulesetConfig.class);
             return getRulesetExecutor(rulesetConfig);
@@ -124,7 +126,7 @@ public class JRuleImpl implements JRule {
         String ruleName = ruleConfig.getRuleName();
         Rule rule = ruleMap.get(ruleName);
         if (rule == null) {
-            rule = ruleLoader.load(ruleConfig);
+            rule = this.ruleLoader.load(ruleConfig);
             ruleMap.put(ruleName, rule);
         }
         return rule;

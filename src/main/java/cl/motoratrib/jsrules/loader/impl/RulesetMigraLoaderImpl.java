@@ -8,12 +8,12 @@ import cl.motoratrib.jsrules.exception.InvalidConfigException;
 import cl.motoratrib.jsrules.impl.RuleExecutorImpl;
 import cl.motoratrib.jsrules.loader.RulesetLoader;
 import cl.motoratrib.jsrules.service.JRule;
+import cl.motoratrib.jsrules.service.JRuleImpl;
 import cl.motoratrib.jsrules.util.ClassHandler;
 import cl.motoratrib.jsrules.util.RulesetTypeHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -22,16 +22,15 @@ import java.util.List;
 /**
  * Created by Marcelo Lomeña 2018/04/06
  */
-@Component
+@Service
 public class RulesetMigraLoaderImpl implements RulesetLoader {
     private final static Logger LOGGER = LoggerFactory.getLogger(RulesetMigraLoaderImpl.class);
 
-    @Autowired
-    JRule jRule;
+    private JRuleImpl jRule;
 
     @Autowired
-    public RulesetMigraLoaderImpl(JRule jRule) {
-        this.jRule = jRule;
+    public RulesetMigraLoaderImpl() {
+        this.jRule = new JRuleImpl();
     }
 
     @Override
